@@ -31,7 +31,7 @@ const ChatHeader = () => {
                 />
               </div>
             ) : (
-              <div className={`avatar avatar-placeholder w-10 rounded-full ${isOnline ? "avatar-online" : ""}`}>
+              <div className={`avatar avatar-placeholder w-10 rounded-full `}>
                 <div className="bg-neutral text-neutral-content w-10 h-10 rounded-full flex items-center justify-center">
                   <span>{getInitials(selectedUser.fullname)}</span>
                 </div>
