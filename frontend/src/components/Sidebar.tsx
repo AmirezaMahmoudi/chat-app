@@ -64,7 +64,7 @@ const Sidebar = () => {
                   </div>
                 </div>
               ) : (
-                <div>
+                <div className={`avatar avatar-placeholder `}>
                   <div className="bg-neutral text-neutral-content w-10 rounded-full flex items-center justify-center">
                     <span>{getInitials(user.fullname)}</span>
                   </div>
