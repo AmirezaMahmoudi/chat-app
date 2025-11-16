@@ -14,12 +14,17 @@ interface User {
 interface AuthStore {
   authUser: User | null;
   isUpdatingProfile: boolean;
-  updateProfile: (data: { profilePic: string; email?: string; password?: string }) => Promise<void>;
+  updateProfile: (data: {
+    profilePic: string;
+    email?: string;
+    password?: string;
+  }) => Promise<void>;
   // ... other properties
 }
 
 const Profile = () => {
-  const { authUser, isUpdatingProfile, updateProfile } = useAuthStore() as AuthStore;
+  const { authUser, isUpdatingProfile, updateProfile } =
+    useAuthStore() as AuthStore;
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +41,11 @@ const Profile = () => {
       await updateProfile({ profilePic: base64Image });
     };
   };
-
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  };
   return (
     <div className="h-screen pt-20">
       <div className="max-w-2xl mx-auto p-4 py-8">
@@ -48,11 +57,35 @@ const Profile = () => {
 
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
-              <img
-                src={selectedImg || authUser?.profilePic || "/avatar.png"}
-                alt="Profile"
-                className="size-32 rounded-full object-cover border-4"
-              />
+              <div className="chat-image avatar">
+                {selectedImg ? (
+                  <div className="avatar w-32 rounded-full">
+                    {" "}
+                    {/* Adjust size as needed */}
+                    <img
+                      src={selectedImg}
+                      alt="Profile"
+                      className="size-32 rounded-full object-cover border-4"
+                    />
+                  </div>
+                ) : authUser?.profilePic ? (
+                  <div className="avatar w-32 rounded-full">
+                    <img
+                      src={authUser.profilePic}
+                      alt={authUser.fullname}
+                      className="size-32 rounded-full object-cover border-4"
+                    />
+                  </div>
+                ) : (
+                  <div className="avatar avatar-placeholder w-32 rounded-full">
+                    <div className="bg-neutral text-neutral-content w-32 h-32 rounded-full flex items-center justify-center border-4">
+                      <span className="text-xl">
+                        {getInitials(authUser?.fullname || "User")}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
               <label
                 htmlFor="avatar-upload"
                 className={`
@@ -60,7 +93,9 @@ const Profile = () => {
                   bg-base-content hover:scale-105
                   p-2 rounded-full cursor-pointer 
                   transition-all duration-200
-                  ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
+                  ${
+                    isUpdatingProfile ? "animate-pulse pointer-events-none" : ""
+                  }
                 `}
               >
                 <Camera className="w-5 h-5 text-base-200" />
@@ -106,10 +141,6 @@ const Profile = () => {
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium mb-4">Account Information</h2>
             <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between py-2 border-b border-zinc-700">
-                <span>Member Since</span>
-                <span>{authUser?.createdAt?.split("T")[0]}</span>
-              </div>
               <div className="flex items-center justify-between py-2">
                 <span>Account Status</span>
                 <span className="text-green-500">Active</span>
